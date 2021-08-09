@@ -1,0 +1,39 @@
+Create database lace;
+CREATE TABLE `lace`.`orders` (
+  `Sno` INT NOT NULL AUTO_INCREMENT,
+  `Order_date` DATE NOT NULL,
+  `PO_no` INT NOT NULL,
+  `Company_name` VARCHAR(45) NOT NULL,
+  UNIQUE INDEX `Sno_UNIQUE` (`Sno` ASC) VISIBLE,
+  PRIMARY KEY (`PO_no`),
+  UNIQUE INDEX `PO_no_UNIQUE` (`PO_no` ASC) VISIBLE);
+
+
+CREATE TABLE `lace`.`items` (
+  `item_code` VARCHAR(12) NOT NULL,
+  `DESCRIPTION` VARCHAR(100) NOT NULL,
+  `size_mm` INT NOT NULL,
+  `color` VARCHAR(30) NOT NULL,
+  `rate` FLOAT(7,5) NOT NULL,
+  PRIMARY KEY (`item_code`),
+  UNIQUE INDEX `item_code_UNIQUE` (`item_code` ASC) VISIBLE);
+
+
+ALTER TABLE `lace`.`orders`
+ADD COLUMN `item_code` VARCHAR(45) NOT NULL AFTER `Company_name`,
+ADD COLUMN `order_quantity` BIGINT NOT NULL AFTER `item_code`,
+ADD COLUMN `rate` FLOAT(7,5) NOT NULL AFTER `order_quantity`,
+ADD COLUMN `total_item_price` DECIMAL(10,2) GENERATED ALWAYS AS ((`rate` * `order_quantity`)) STORED AFTER `rate`,
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`PO_no`, `item_code`, `rate`);
+;
+
+
+ALTER TABLE `lace`.`items`
+ADD COLUMN `Sno` INT UNSIGNED NOT NULL AUTO_INCREMENT AFTER `rate`,
+ADD UNIQUE INDEX `Sno_UNIQUE` (`Sno` ASC) VISIBLE;
+;
+ALTER TABLE `lace`.`items`
+CHANGE COLUMN `Sno` `Sno` INT UNSIGNED NOT NULL AUTO_INCREMENT FIRST;
+
+INSERT INTO `lace`.`items` (`item_code`, `DESCRIPTION`, `size_mm`, `color`, `rate`) VALUES ('RMD0054470', 'FLAT COTTON LAVE 105CM PUMA', '8', 'PRINCESS BLUE 19-4150TPX', '6.10000');
